@@ -1,77 +1,48 @@
-"""Simple CLI for the Task Management System.
+from task_utils import add_task, mark_complete, view_pending
+from validation import is_valid_input
 
-Provides: add task, mark complete, view pending, and show progress.
-
-Tasks are persisted to `tasks.json` in the same directory.
-"""
-import sys
-
-import task_utils as utils
-from validation import is_valid_index
-
-
-def print_menu() -> None:
-    print()
-    print("Task Manager")
-    print("1) Add task")
-    print("2) Mark task complete")
-    print("3) View pending tasks")
-    print("4) Show progress")
-    print("5) Quit")
-
-
-def main() -> None:
-    tasks = utils.load_tasks()
+def main():
+    # Initialize the structure to store tasks
+    tasks = []
+    
     while True:
-        print_menu()
-        choice = input("Choose an option: ").strip()
-        if choice == "1":
-            title = input("Task title: ").strip()
-            description = input("Description (optional): ").strip()
-            try:
-                utils.add_task(tasks, title, description)
-                utils.save_tasks(tasks)
-                print("Task added.")
-            except ValueError as e:
-                print("Error:", e)
-        elif choice == "2":
-            if not tasks:
-                print("No tasks available.")
-                continue
-            for i, t in enumerate(tasks):
-                status = "✓" if t.get("completed") else " "
-                print(f"[{i}] {status} {t['title']}")
-            index = input("Index to mark complete: ").strip()
-            if not is_valid_index(index, tasks):
-                print("Invalid index.")
-                continue
-            utils.mark_complete(tasks, index)
-            utils.save_tasks(tasks)
-            print("Task marked complete.")
-        elif choice == "3":
-            pending = utils.list_pending(tasks)
-            if not pending:
-                print("No pending tasks.")
+        print("\n=== Task Management System ===")
+        print("1. Add a task")
+        print("2. Mark task as complete")
+        print("3. View pending tasks")
+        print("4. Exit")
+        
+        choice = input("Enter your choice (1-4): ")
+        
+        if choice == '1':
+            description = input("Enter the task description: ")
+            
+            # Use validation.py to check input
+            if is_valid_input(description):
+                add_task(tasks, description)
             else:
-                for i, t in pending:
-                    desc = t.get("description")
-                    if desc:
-                        print(f"[{i}] {t['title']} - {desc}")
-                    else:
-                        print(f"[{i}] {t['title']}")
-        elif choice == "4":
-            print(f"Progress: {utils.progress(tasks)}%")
-        elif choice == "5" or choice.lower() == "q":
-            utils.save_tasks(tasks)
-            print("Goodbye.")
+                print("Error: Task description cannot be empty.")
+                
+        elif choice == '2':
+            # Show pending tasks first so the user knows which ID to pick
+            has_pending = view_pending(tasks)
+            
+            if has_pending:
+                try:
+                    task_id = int(input("\nEnter the ID number of the task to complete: "))
+                    mark_complete(tasks, task_id)
+                except ValueError:
+                    print("Error: Please enter a valid numerical ID.")
+                    
+        elif choice == '3':
+            view_pending(tasks)
+            
+        elif choice == '4':
+            print("Exiting Task Management System...")
             break
+            
         else:
-            print("Invalid option, please try again.")
-
+            print("Invalid choice. Please select an option from 1 to 4.")
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\nInterrupted. Exiting.")
-        sys.exit(0)
+    main()
