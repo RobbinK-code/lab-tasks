@@ -1,48 +1,46 @@
-from task_utils import add_task, mark_complete, view_pending
-from validation import is_valid_input
+import task_utils
+import validation
 
 def main():
-    # Initialize the structure to store tasks
     tasks = []
     
     while True:
-        print("\n=== Task Management System ===")
-        print("1. Add a task")
+        print("\n1. Add a task")
         print("2. Mark task as complete")
         print("3. View pending tasks")
-        print("4. Exit")
+        print("4. Check progress")
+        print("5. Exit")
         
-        choice = input("Enter your choice (1-4): ")
+        choice = input("Select an option: ")
         
         if choice == '1':
-            description = input("Enter the task description: ")
-            
-            # Use validation.py to check input
-            if is_valid_input(description):
-                add_task(tasks, description)
+            description = input("Enter task description: ")
+            if validation.check_length(description):
+                task_utils.add_task(tasks, description)
             else:
-                print("Error: Task description cannot be empty.")
+                print("Error: Description cannot be empty.")
                 
         elif choice == '2':
-            # Show pending tasks first so the user knows which ID to pick
-            has_pending = view_pending(tasks)
+            task_utils.view_pending(tasks)
+            task_id_str = input("Enter task ID to complete: ")
             
-            if has_pending:
-                try:
-                    task_id = int(input("\nEnter the ID number of the task to complete: "))
-                    mark_complete(tasks, task_id)
-                except ValueError:
-                    print("Error: Please enter a valid numerical ID.")
-                    
+            # This triggers the ValueError check in validation.py
+            task_id = validation.check_number(task_id_str) 
+            
+            if task_id != -1:
+                task_utils.mark_complete(tasks, task_id)
+            else:
+                print("Error: Please enter a valid number.")
+                
         elif choice == '3':
-            view_pending(tasks)
+            task_utils.view_pending(tasks)
             
         elif choice == '4':
-            print("Exiting Task Management System...")
-            break
+            # Check your starter code: if it's named track_progress, change this line
+            task_utils.check_progress(tasks)
             
-        else:
-            print("Invalid choice. Please select an option from 1 to 4.")
+        elif choice == '5':
+            break
 
 if __name__ == "__main__":
     main()
