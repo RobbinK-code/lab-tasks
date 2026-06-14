@@ -4,7 +4,7 @@ from task_manager.task_utils import add_task, mark_task_as_complete, view_pendin
 # Define the main function
 def main():
     while True:
-        print("\nTask Management System")
+        print("Task Management System")
         print("1. Add Task")
         print("2. Mark Task as Complete")
         print("3. View Pending Tasks")
@@ -30,7 +30,8 @@ def main():
             
         elif choice == "4":
             progress = calculate_progress()
-            print(f"Current Progress: {progress}% completed.")
+            # Do not change the internal logic, just clear tracking return values
+            return progress
             
         elif choice == "5":
             print("Exiting the program...")
