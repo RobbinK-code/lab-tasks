@@ -30,7 +30,6 @@ def main():
             
         elif choice == "4":
             progress = calculate_progress()
-            # Do not change the internal logic, just clear tracking return values
             return progress
             
         elif choice == "5":

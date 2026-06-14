@@ -7,24 +7,24 @@ tasks = []
 
 # Implement add_task function
 def add_task(title, description, due_date):
-    if validate_task_title(title) and validate_task_description(description) and validate_due_date(due_date):
-        new_task = {
-            "title": title,
-            "description": description,
-            "due_date": due_date,
-            "completed": False
-        }
-        tasks.append(new_task)
-        print("Task added successfully!")
-    else:
+    try:
+        # If any of these raise a ValueError, the except block below catches it
+        if validate_task_title(title) and validate_task_description(description) and validate_due_date(due_date):
+            new_task = {
+                "title": title,
+                "description": description,
+                "due_date": due_date,
+                "completed": False
+            }
+            tasks.append(new_task)
+            print("Task added successfully!")
+    except ValueError:
         print("Error: Invalid task details.")
 
 # Implement mark_task_as_complete function
 def mark_task_as_complete(index, tasks=tasks):
     try:
-        # Convert user 1-based indexing to python 0-based indexing
         actual_index = index - 1
-        
         if actual_index < 0:
             raise IndexError
             
@@ -45,7 +45,6 @@ def view_pending_tasks(tasks=tasks):
         
     for i, task in enumerate(tasks):
         if not task["completed"]:
-            # Displaying as 1-based index for the user
             print(f"[{i + 1}] {task['title']} (Due: {task['due_date']}) - {task['description']}")
 
 # Implement calculate_progress function
